@@ -1,10 +1,10 @@
-body{
+body {
     margin: 0;
     background: black;
     overflow: hidden;
 }
 
-#wrapper{
+#wrapper {
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -13,7 +13,16 @@ body{
     justify-content: space-evenly;
 }
 
-#game{
+#stats{
+    color: white;
+    position: absolute;
+    padding: 1rem;
+    text-align: center;
+    width: calc(100% - 2rem);
+    font-size: 3rem;
+}
+
+#game {
     height: 100vh;
     max-height: 700px;
     display: flex;
@@ -27,11 +36,12 @@ body{
     height: 140px;
     margin: 1rem;
     position: relative;
-    transition: transform 0.5s;
     transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.5s;
 }
 
-.card.active{
+.card.active {
     transform: rotateY(180deg);
 }
 
@@ -44,17 +54,20 @@ body{
     justify-content: center;
     position: absolute;
     backface-visibility: hidden;
-    pointer-events: none;
 }
 
-.card .face{
-    background: purple;
-    transform: rotateY(180deg);
-    color: white;
+.card .back {
+    border: 3px solid rgb(218, 73, 218);
+    background: url(images/carta.png) center / contain no-repeat;
+
+}
+
+.card .face {
+    background: rgb(209, 68, 209);
+    color: black;
     font-size: 6rem;
+    transform: rotateY(180deg); 
 }
 
-.card .back{
-    border: 2px solid purple;
-}
+
 
