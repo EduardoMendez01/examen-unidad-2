@@ -6,20 +6,39 @@ let valueUsed = [];
 let currentMove = 0;
 let currentAttemps = 0;
 let isMusicPlaying = false;
+let gameActive = true;
 
 let cardTemplate = '<div class="back"></div><div class="face"></div>';
-
 
 const clickSound = new Audio('sounds/sonidoCarta.mp3');
 const backgroundMusic = new Audio('sounds/musicaFondo.mp3');
 const successSound = new Audio('sounds/sonidoPar.mp3');
+const shuffleSound = new Audio('sounds/barajeo.mp3'); 
 
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.2;
 
+let timeLeft = 150;
+
+const timerDisplay = document.querySelector('#timer');
+timerDisplay.innerHTML = `Tiempo restante: ${timeLeft}s`;
+
+const timer = setInterval(() => {
+    if (timeLeft > 0) {
+        timeLeft--;
+        timerDisplay.innerHTML = `Tiempo restante: ${timeLeft}s`;
+    } else {
+        gameActive = false;
+        clearInterval(timer);
+        alert('¡Se acabó el tiempo!');
+    }
+}, 1000);
+
 function activate(e) {
+    if (!gameActive) return;
+
     const card = e.currentTarget;
-    
+
     if (!isMusicPlaying) {
         backgroundMusic.play();
         isMusicPlaying = true;
@@ -27,7 +46,7 @@ function activate(e) {
 
     clickSound.currentTime = 0;
     clickSound.play();
-    
+
     if (currentMove < 2 && !card.classList.contains('active')) {
         card.classList.add('active');
         selectedCards.push(card);
@@ -42,7 +61,6 @@ function activate(e) {
             if (firstCardValue === secondCardValue) {
                 successSound.currentTime = 0;
                 successSound.play();
-
                 selectedCards = [];
                 currentMove = 0;
             } else {
@@ -52,6 +70,10 @@ function activate(e) {
                     selectedCards = [];
                     currentMove = 0;
                 }, 600);
+            }
+
+            if (currentAttemps % 5 === 0) {
+                shuffleCards();
             }
         }
     }
@@ -75,6 +97,30 @@ function getFaceValue(value) {
     return rtn;
 }
 
+function shuffleCards() {
+    shuffleSound.currentTime = 0; 
+    shuffleSound.play(); 
+
+    document.querySelectorAll('.card').forEach(card => {
+        card.classList.add('shuffling');
+    });
+
+    setTimeout(() => {
+        valueUsed = [];
+        cards.forEach((card, i) => {
+            randomValue();
+            card.querySelector('.face').innerHTML = getFaceValue(valueUsed[i]);
+            card.classList.remove('active');
+        });
+
+        setTimeout(() => {
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('shuffling');
+            });
+        }, 1000);
+    }, 500);
+}
+
 for (let i = 0; i < totalcards; i++) {
     let div = document.createElement('div');
     div.classList.add('card');
@@ -88,6 +134,11 @@ for (let i = 0; i < totalcards; i++) {
 
     document.querySelector('#game').append(div);
 }
+
+
+
+
+
 
 
 
