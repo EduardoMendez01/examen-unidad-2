@@ -1,8 +1,12 @@
 const totalcards = 30;
-const availableCards = ['A', 'K', 'Q', 'J'];
+const availableCards = [
+    'A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', 
+    '♠', '♥', '♦', '♣', '☀', '✈', '⚽', '♫', '★', '✔', '☺'
+];
 let cards = [];
 let selectedCards = [];
 let valueUsed = [];
+let matchedCards = [];
 let currentMove = 0;
 let currentAttemps = 0;
 let isMusicPlaying = false;
@@ -13,12 +17,12 @@ let cardTemplate = '<div class="back"></div><div class="face"></div>';
 const clickSound = new Audio('sounds/sonidoCarta.mp3');
 const backgroundMusic = new Audio('sounds/musicaFondo.mp3');
 const successSound = new Audio('sounds/sonidoPar.mp3');
-const shuffleSound = new Audio('sounds/barajeo.mp3'); 
+const shuffleSound = new Audio('sounds/barajeo.mp3');
 
 backgroundMusic.loop = true;
 backgroundMusic.volume = 0.2;
 
-let timeLeft = 150;
+let timeLeft = 100;
 
 const timerDisplay = document.querySelector('#timer');
 timerDisplay.innerHTML = `Tiempo restante: ${timeLeft}s`;
@@ -47,7 +51,7 @@ function activate(e) {
     clickSound.currentTime = 0;
     clickSound.play();
 
-    if (currentMove < 2 && !card.classList.contains('active')) {
+    if (currentMove < 2 && !card.classList.contains('active') && !matchedCards.includes(card)) {
         card.classList.add('active');
         selectedCards.push(card);
 
@@ -61,6 +65,10 @@ function activate(e) {
             if (firstCardValue === secondCardValue) {
                 successSound.currentTime = 0;
                 successSound.play();
+
+              
+                matchedCards.push(selectedCards[0], selectedCards[1]);
+
                 selectedCards = [];
                 currentMove = 0;
             } else {
@@ -79,38 +87,39 @@ function activate(e) {
     }
 }
 
-function randomValue() {
-    let rnd = Math.floor(Math.random() * totalcards * 0.5);
-    let values = valueUsed.filter(value => value === rnd);
-    if (values.length < 2) {
-        valueUsed.push(rnd);
-    } else {
-        randomValue();
-    }
-}
+function randomizeCards() {
+    valueUsed = [];
+    const cardPairs = totalcards / 2;
+    let values = [];
 
-function getFaceValue(value) {
-    let rtn = value;
-    if (value < availableCards.length) {
-        rtn = availableCards[value];
+    for (let i = 0; i < cardPairs; i++) {
+        let value = availableCards[i % availableCards.length];
+        values.push(value, value); 
     }
-    return rtn;
+
+    values = values.sort(() => Math.random() - 0.5);
+    return values;
 }
 
 function shuffleCards() {
-    shuffleSound.currentTime = 0; 
-    shuffleSound.play(); 
+    shuffleSound.currentTime = 0;
+    shuffleSound.play();
 
     document.querySelectorAll('.card').forEach(card => {
-        card.classList.add('shuffling');
+        
+        if (!matchedCards.includes(card)) {
+            card.classList.add('shuffling');
+            card.classList.remove('active');
+        }
     });
 
     setTimeout(() => {
-        valueUsed = [];
+        const newValues = randomizeCards();
+
         cards.forEach((card, i) => {
-            randomValue();
-            card.querySelector('.face').innerHTML = getFaceValue(valueUsed[i]);
-            card.classList.remove('active');
+            if (!matchedCards.includes(card)) {
+                card.querySelector('.face').innerHTML = newValues[i];
+            }
         });
 
         setTimeout(() => {
@@ -121,19 +130,32 @@ function shuffleCards() {
     }, 500);
 }
 
-for (let i = 0; i < totalcards; i++) {
-    let div = document.createElement('div');
-    div.classList.add('card');
-    div.innerHTML = cardTemplate;
-    cards.push(div);
 
-    randomValue();
-    div.querySelector('.face').innerHTML = getFaceValue(valueUsed[i]);
+function initializeGame() {
+    const cardValues = randomizeCards();
 
-    div.addEventListener('click', activate);
+    for (let i = 0; i < totalcards; i++) {
+        let div = document.createElement('div');
+        div.classList.add('card');
+        div.innerHTML = cardTemplate;
+        cards.push(div);
 
-    document.querySelector('#game').append(div);
+        div.querySelector('.face').innerHTML = cardValues[i]; 
+
+        div.addEventListener('click', activate);
+
+        document.querySelector('#game').append(div);
+    }
 }
+
+
+initializeGame();
+
+
+
+
+
+
 
 
 
