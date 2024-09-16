@@ -1,11 +1,12 @@
 const totalcards = 30;
 const availableCards = [
-    'A', 'K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1', 
-    '♠', '♥', '♦', '♣', '☀', '✈', '⚽', '♫', '★', '✔', '☺'
+    'images/anby.png', 'images/grace.png', 'images/personaje.png', 'images/personaje2.png', 'images/soukaku.png', 
+    'images/pipe.png', 'images/personaje3.png', 'images/qinyi.png', 'images/soldier.png', 'images/zhu.png',
+    'images/shogun.png', 'images/miko.png', 'images/nicole.png', 'images/billy.png', 'images/neko.png'
 ];
+
 let cards = [];
 let selectedCards = [];
-let valueUsed = [];
 let matchedCards = [];
 let currentMove = 0;
 let currentAttemps = 0;
@@ -59,18 +60,24 @@ function activate(e) {
             currentAttemps++;
             document.querySelector('#stats').innerHTML = currentAttemps + ' intentos';
 
-            const firstCardValue = selectedCards[0].querySelector('.face').innerHTML;
-            const secondCardValue = selectedCards[1].querySelector('.face').innerHTML;
+            const firstCardValue = selectedCards[0].querySelector('.face img').src;
+            const secondCardValue = selectedCards[1].querySelector('.face img').src;
 
             if (firstCardValue === secondCardValue) {
                 successSound.currentTime = 0;
                 successSound.play();
 
-              
                 matchedCards.push(selectedCards[0], selectedCards[1]);
 
                 selectedCards = [];
                 currentMove = 0;
+
+                if (matchedCards.length === totalcards) {
+                    gameActive = false;
+                    setTimeout(() => {
+                        alert('¡Ganaste! Has encontrado todos los pares.');
+                    }, 500);
+                }
             } else {
                 setTimeout(() => {
                     selectedCards[0].classList.remove('active');
@@ -88,25 +95,34 @@ function activate(e) {
 }
 
 function randomizeCards() {
-    valueUsed = [];
     const cardPairs = totalcards / 2;
     let values = [];
+    let usedIndices = new Set();
 
-    for (let i = 0; i < cardPairs; i++) {
-        let value = availableCards[i % availableCards.length];
-        values.push(value, value); 
+    while (values.length < totalcards) {
+        let index = Math.floor(Math.random() * availableCards.length);
+
+        if (!usedIndices.has(index)) {
+            values.push(availableCards[index]);
+            values.push(availableCards[index]);
+            usedIndices.add(index);
+        }
+
+        if (usedIndices.size >= cardPairs) {
+            break;
+        }
     }
 
     values = values.sort(() => Math.random() - 0.5);
     return values;
 }
 
+
 function shuffleCards() {
     shuffleSound.currentTime = 0;
     shuffleSound.play();
 
     document.querySelectorAll('.card').forEach(card => {
-        
         if (!matchedCards.includes(card)) {
             card.classList.add('shuffling');
             card.classList.remove('active');
@@ -118,7 +134,7 @@ function shuffleCards() {
 
         cards.forEach((card, i) => {
             if (!matchedCards.includes(card)) {
-                card.querySelector('.face').innerHTML = newValues[i];
+                card.querySelector('.face').innerHTML = `<img src="${newValues[i]}" alt="Carta">`;
             }
         });
 
@@ -130,7 +146,6 @@ function shuffleCards() {
     }, 500);
 }
 
-
 function initializeGame() {
     const cardValues = randomizeCards();
 
@@ -140,7 +155,7 @@ function initializeGame() {
         div.innerHTML = cardTemplate;
         cards.push(div);
 
-        div.querySelector('.face').innerHTML = cardValues[i]; 
+        div.querySelector('.face').innerHTML = `<img src="${cardValues[i]}" alt="Carta">`;
 
         div.addEventListener('click', activate);
 
@@ -148,8 +163,10 @@ function initializeGame() {
     }
 }
 
-
 initializeGame();
+
+
+
 
 
 
