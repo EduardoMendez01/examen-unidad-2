@@ -32,7 +32,7 @@ body {
     justify-content: space-evenly;
 }
 
-#stats{
+#stats {
     color: white;
     position: absolute;
     padding: 1rem;
@@ -51,8 +51,8 @@ body {
 }
 
 .card {
-    width: 100px;
-    height: 140px;
+    width: 100px;   /* Tamaño de la carta */
+    height: 140px;  /* Tamaño de la carta */
     margin: 1rem;
     position: relative;
     transform-style: preserve-3d;
@@ -78,14 +78,23 @@ body {
 .card .back {
     border: 3px solid rgb(218, 73, 218);
     background: url(images/carta.png) center / contain no-repeat;
-
 }
 
 .card .face {
     background: rgb(209, 68, 209);
     color: black;
     font-size: 6rem;
-    transform: rotateY(180deg); 
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card .face img {
+    width: 100%;    /* La imagen ocupa el 100% del ancho de la carta */
+    height: 100%;   /* La imagen ocupa el 100% de la altura de la carta */
+    object-fit: cover;  /* Ajuste de la imagen para evitar distorsiones */
+    border-radius: 8px; /* Bordes redondeados para la imagen */
 }
 
 

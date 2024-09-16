@@ -155,7 +155,10 @@ function initializeGame() {
         div.innerHTML = cardTemplate;
         cards.push(div);
 
+
+        
         div.querySelector('.face').innerHTML = `<img src="${cardValues[i]}" alt="Carta">`;
+
 
         div.addEventListener('click', activate);
 
